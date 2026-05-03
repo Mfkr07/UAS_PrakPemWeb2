@@ -1,0 +1,110 @@
+====================================================================
+TUTORIAL INSTALASI APLIKASI RENTAL WARNET & PENJELASAN STRUKTUR KODE
+====================================================================
+
+Dokumen ini berisi panduan lengkap untuk menginstal aplikasi dari GitHub 
+ke perangkat baru, serta penjelasan mengenai struktur folder dan kode.
+
+
+--------------------------------------------------------------------
+BAGIAN 1: TUTORIAL INSTALASI DARI GITHUB
+--------------------------------------------------------------------
+
+A. Persiapan Lingkungan (Prasyarat)
+Pastikan perangkat baru Anda sudah terinstal perangkat lunak berikut:
+1. PHP (Minimal versi 8.2)
+2. Composer (Package manager untuk PHP)
+3. Node.js & NPM (Package manager untuk Frontend/JavaScript)
+4. Database Server (MySQL/MariaDB, biasanya menggunakan XAMPP/Laragon)
+5. Git
+
+B. Langkah-langkah Instalasi
+1. Clone Repository
+   Buka Terminal/CMD, arahkan ke folder tujuan Anda (misal: htdocs), lalu jalankan:
+   > git clone <URL_GITHUB_ANDA>
+   > cd <NAMA_FOLDER_REPO>
+
+2. Persiapkan Database
+   Buka phpMyAdmin (atau aplikasi database manager lainnya), lalu buat database
+   baru yang KOSONG dengan nama: warnet_db
+   (Pastikan MySQL server/XAMPP sudah berjalan).
+
+3. Jalankan Instalasi Otomatis (Sangat Disarankan)
+   Aplikasi ini telah dikonfigurasi dengan script instalasi otomatis. 
+   Di dalam terminal, jalankan perintah ini:
+   > composer run setup
+
+   (Proses ini akan otomatis melakukan: 
+   - composer install (mengunduh library PHP)
+   - copy .env.example menjadi .env
+   - php artisan key:generate (membuat kunci keamanan aplikasi)
+   - php artisan migrate --force (membuat tabel-tabel di database)
+   - npm install (mengunduh library Frontend)
+   - npm run build (mengkompilasi aset CSS/JS))
+
+4. Cek File Konfigurasi (.env)
+   Buka file `.env`. Secara default, aplikasi akan terhubung ke:
+   DB_DATABASE=warnet_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+   (Jika database Anda menggunakan password, isi bagian DB_PASSWORD).
+
+5. Jalankan Server Aplikasi
+   Aplikasi ini juga memiliki script jalan cepat. Jalankan perintah:
+   > composer run dev
+
+   (Perintah ini akan menjalankan server PHP, Vite/Frontend, dan Queue pekerja 
+   di latar belakang secara bersamaan).
+   Aplikasi sekarang bisa diakses di browser melalui alamat: http://localhost:8000
+
+
+--------------------------------------------------------------------
+BAGIAN 2: PENJELASAN STRUKTUR FOLDER & KODE (LARAVEL)
+--------------------------------------------------------------------
+
+Aplikasi ini dibangun menggunakan framework Laravel. Berikut adalah penjelasan 
+folder-folder penting tempat kode Anda berada:
+
+1. Folder "app/"
+   Ini adalah "Otak" dari aplikasi Anda.
+   - app/Models/       : Berisi representasi dari tabel database. Di sinilah logika 
+                         relasi antar tabel didefinisikan (misal: Relasi User ke Booking).
+   - app/Http/Controllers/ : Tempat logika bisnis berada. Controller menerima request 
+                         dari pengguna, memproses data (mengambil dari Model), dan 
+                         mengirimnya ke tampilan (View).
+
+2. Folder "routes/"
+   - routes/web.php    : File ini adalah "Peta Navigasi". Di sini Anda mengatur URL mana 
+                         yang akan diarahkan ke Controller mana. Misalnya: Jika user 
+                         mengakses '/login', tampilkan halaman login.
+
+3. Folder "resources/"
+   Ini adalah bagian Frontend (Tampilan yang dilihat pengguna).
+   - resources/views/  : Tempat file HTML yang menggunakan format ".blade.php". 
+                         File Blade bisa menampilkan data dinamis dari Controller.
+                         Contoh: halaman dashboard admin, profil user, landing page.
+   - resources/css/ & js/: Berisi source code untuk desain tampilan (TailwindCSS) dan 
+                         interaktivitas halaman. File ini dikompilasi oleh Vite.
+
+4. Folder "database/"
+   - database/migrations/: Berisi file yang mengatur skema/struktur tabel database. 
+                         (Membuat kolom, tipe data, foreign key).
+   - database/seeders/   : Script untuk memasukkan data awal/dummy ke dalam database.
+
+5. Folder "public/"
+   Folder yang dapat diakses publik secara langsung. Di sinilah hasil kompilasi 
+   CSS/JS, gambar (images), dan file unduhan disimpan.
+
+6. File ".env"
+   File konfigurasi environment. Menyimpan informasi sensitif seperti nama database, 
+   password, kunci aplikasi, dan konfigurasi email. (File ini TIDAK BOLEH diunggah 
+   ke GitHub publik).
+
+7. File "composer.json"
+   Mencatat semua dependensi (library PHP) yang dibutuhkan aplikasi. Di file ini 
+   juga terdapat "scripts" kustom seperti "setup" dan "dev" yang memudahkan proses 
+   instalasi dan pengembangan (seperti dijelaskan di Bagian 1).
+
+8. File "package.json" & "vite.config.js"
+   Mencatat dependensi frontend (NPM) dan konfigurasi untuk pemrosesan/kompilasi 
+   aset CSS dan JavaScript (menggunakan Vite).

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Exports\BookingsExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 class AdminController extends Controller
 {
     public function dashboard()
@@ -56,10 +58,61 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'PC dihapus.');
     }
 
-    public function bookingIndex()
+    public function bookingIndex(Request $request)
     {
-        $bookings = \App\Models\Booking::with(['user', 'computer', 'canteenItems'])->latest()->get();
-        return view('admin.booking_index', compact('bookings'));
+        $query = \App\Models\Booking::with(['user', 'computer', 'canteenItems'])->latest();
+
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        if ($request->filled('pc_category')) {
+            $query->whereHas('computer', function($q) use ($request) {
+                $q->where('price_per_hour', $request->pc_category);
+            });
+        }
+
+        $bookings = $query->get();
+        $categories = \App\Models\Computer::select('price_per_hour')->distinct()->orderBy('price_per_hour')->get();
+
+        return view('admin.booking_index', compact('bookings', 'categories'));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = \App\Models\Booking::with(['user', 'computer', 'canteenItems'])->latest();
+
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        if ($request->filled('pc_category')) {
+            $query->whereHas('computer', function($q) use ($request) {
+                $q->where('price_per_hour', $request->pc_category);
+            });
+        }
+
+        $bookings = $query->get();
+        $pdf = Pdf::loadView('admin.bookings_pdf', compact('bookings'));
+        return $pdf->download('rekapitulasi_pendapatan.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $query = \App\Models\Booking::with(['user', 'computer', 'canteenItems'])->latest();
+
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        if ($request->filled('pc_category')) {
+            $query->whereHas('computer', function($q) use ($request) {
+                $q->where('price_per_hour', $request->pc_category);
+            });
+        }
+
+        $bookings = $query->get();
+        return Excel::download(new BookingsExport($bookings), 'rekapitulasi_pendapatan.xlsx');
     }
 
     public function finishBooking($id)

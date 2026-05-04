@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/billing/success', [UserController::class, 'billingSuccess'])->name('billing.success');
     Route::get('/book/{id}', [UserController::class, 'book'])->name('user.book');
     Route::post('/book/{id}', [UserController::class, 'store'])->name('user.store');
+    Route::post('/book/{id}/cancel', [UserController::class, 'cancelBooking'])->name('user.cancel_booking');
+    Route::post('/book/{id}/end', [UserController::class, 'endSession'])->name('user.end_session');
     Route::get('/history', [UserController::class, 'history'])->name('history');
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::post('/profile/topup', [UserController::class, 'topup'])->name('profile.topup');
@@ -37,6 +39,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/computers/{id}', [AdminController::class, 'pcDestroy'])->name('computers.destroy');
 
         Route::get('/bookings', [AdminController::class, 'bookingIndex'])->name('bookings.index');
+        Route::get('/bookings/export/pdf', [AdminController::class, 'exportPdf'])->name('bookings.export.pdf');
+        Route::get('/bookings/export/excel', [AdminController::class, 'exportExcel'])->name('bookings.export.excel');
         Route::post('/bookings/{id}/finish', [AdminController::class, 'finishBooking'])->name('bookings.finish');
 
         Route::get('/users', [AdminController::class, 'usersIndex'])->name('users.index');

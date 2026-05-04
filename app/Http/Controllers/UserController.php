@@ -8,6 +8,9 @@ class UserController extends Controller
 {
     public function home()
     {
+        // Pastikan status booking di-update (terutama jika scheduler tidak jalan)
+        \Illuminate\Support\Facades\Artisan::call('bookings:process');
+
         $activeBooking = \App\Models\Booking::where('user_id', auth()->id())
                             ->whereIn('status', ['pending', 'active'])
                             ->latest()
@@ -139,6 +142,41 @@ class UserController extends Controller
     }
 
 
+
+    public function cancelBooking($id)
+    {
+        $booking = \App\Models\Booking::where('user_id', auth()->id())
+            ->where('id', $id)
+            ->where('status', 'pending')
+            ->firstOrFail();
+
+        $user = auth()->user();
+        $user->wallet_balance += $booking->total_price;
+        $user->save();
+
+        $booking->delete();
+
+        return redirect()->route('home')->with('success', 'Booking berhasil dibatalkan dan dana telah dikembalikan ke e-Wallet Anda.');
+    }
+
+    public function endSession($id)
+    {
+        $booking = \App\Models\Booking::where('user_id', auth()->id())
+            ->where('id', $id)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        if ($booking->computer) {
+            $booking->computer->update(['status' => 'available']);
+        }
+        
+        $booking->update([
+            'status' => 'completed',
+            'end_time' => now()
+        ]);
+
+        return redirect()->route('home')->with('success', 'Sesi berhasil diakhiri.');
+    }
 
     public function book($id)
     {

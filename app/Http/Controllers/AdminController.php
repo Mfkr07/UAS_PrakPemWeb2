@@ -30,6 +30,12 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('totalUsers', 'totalPcs', 'totalBookings', 'totalRevenue', 'chartLabels', 'chartValues'));
     }
 
+    public function profile()
+    {
+        $user = auth()->user();
+        return view('admin.profile', compact('user'));
+    }
+
     public function pcIndex()
     {
         $computers = \App\Models\Computer::orderBy('name')->get();

@@ -1,21 +1,20 @@
 <?php
 
 use App\Http\Controllers\PublicController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'landing'])->name('landing');
 
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-});
-
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // Breeze Profile Routes (Optional, can integrate into UserController or keep separate)
+    // We will keep them to allow password updates and account deletion if the user wants later,
+    // but the main profile view will be handled by UserController to match the current design.
+    Route::get('/profile-breeze', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile-breeze', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile-breeze', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // User Routes
     Route::get('/home', [UserController::class, 'home'])->name('home');
@@ -27,12 +26,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/book/{id}/cancel', [UserController::class, 'cancelBooking'])->name('user.cancel_booking');
     Route::post('/book/{id}/end', [UserController::class, 'endSession'])->name('user.end_session');
     Route::get('/history', [UserController::class, 'history'])->name('history');
+    
+    // Custom Profile Route
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::post('/profile/topup', [UserController::class, 'topup'])->name('profile.topup');
 
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        
+        Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
         
         Route::get('/computers', [AdminController::class, 'pcIndex'])->name('computers.index');
         Route::post('/computers', [AdminController::class, 'pcStore'])->name('computers.store');
@@ -52,3 +55,5 @@ Route::middleware('auth')->group(function () {
         Route::delete('/canteen/{id}', [AdminController::class, 'canteenDestroy'])->name('canteen.destroy');
     });
 });
+
+require __DIR__.'/auth.php';

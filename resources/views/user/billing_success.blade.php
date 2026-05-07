@@ -189,8 +189,8 @@
             </svg>
         </div>
 
-        <h1 class="success-title">Transaksi Berhasil!</h1>
-        <p class="success-desc">Stasiun pertempuran Anda sudah disiapkan. Saldo Wallet berhasil dipotong.</p>
+        <h1 class="success-title">Booking Berhasil!</h1>
+        <p class="success-desc">Booking Anda sudah dikonfirmasi dan saldo Wallet berhasil dipotong. Silakan datang ke warnet sesuai jadwal.</p>
 
         <div class="receipt-card">
             <div class="receipt-header">
@@ -198,7 +198,7 @@
                     <div class="order-label">ORDER ID</div>
                     <div class="order-id">#WA-{{ str_pad($booking->id, 4, '0', STR_PAD_LEFT) }}</div>
                 </div>
-                <div class="status-badge">Menunggu Check-In</div>
+                <div class="status-badge">Booking Dikonfirmasi</div>
             </div>
 
             <div class="receipt-grid">
@@ -232,9 +232,23 @@
                     <path
                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                 </svg>
-                <p>Silakan menuju ke {{ $booking->computer->name ?? 'PC Anda' }} sesuai jadwal. Sesi Anda akan otomatis
-                    berjalan pada waktu yang telah Anda tentukan.</p>
+                <p>Silakan datang ke warnet dan menuju {{ $booking->computer->name ?? 'PC Anda' }} sesuai jadwal. Admin akan melakukan check-in saat Anda tiba.</p>
             </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; width: 100%; max-width: 550px; margin-bottom: 1rem;">
+            <a href="{{ route('booking.receipt', $booking->id) }}" class="btn-action" style="flex: 1; background-color: transparent; border: 1px solid rgba(168, 85, 247, 0.5); color: var(--purple-light);">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                </svg>
+                LIHAT STRUK
+            </a>
+            <a href="{{ route('booking.receipt.pdf', $booking->id) }}" class="btn-action" style="flex: 1; background-color: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: #06b6d4;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                EXPORT PDF
+            </a>
         </div>
 
         <a href="{{ route('home') }}" class="btn-action" style="width: 100%; max-width: 550px;">CEK TIKET SAYA</a>

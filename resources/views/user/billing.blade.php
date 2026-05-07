@@ -85,8 +85,8 @@
         }
 
         .pc-box.in-use {
-            opacity: 0.4;
-            pointer-events: none;
+            border-color: rgba(239, 68, 68, 0.3);
+            background-color: rgba(239, 68, 68, 0.05);
         }
 
         .pc-box svg {
@@ -462,7 +462,7 @@
             <div class="pc-grid">
                 @foreach ($computers as $pc)
                     <div class="pc-box {{ $pc->status === 'in_use' ? 'in-use' : '' }}"
-                        onclick="selectPc({{ $pc->id }}, '{{ $pc->name }}', {{ $pc->price_per_hour }}, '{{ $pc->status }}')"
+                        onclick="selectPc({{ $pc->id }}, '{{ $pc->name }}', {{ $pc->price_per_hour }})"
                         id="pc_{{ $pc->id }}">
                         <svg viewBox="0 0 24 24">
                             <path
@@ -500,8 +500,7 @@
                         style="width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); color: var(--text-main); padding: 1rem; border-radius: 8px; font-family: inherit; color-scheme: dark;">
                 </div>
             </div>
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: -1.5rem; margin-bottom: 3rem;">Sesi Anda
-                akan otomatis berjalan pada waktu yang dipilih.</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: -1.5rem; margin-bottom: 3rem;">Silakan datang ke warnet sesuai jadwal. Admin akan melakukan check-in saat Anda tiba.</div>
 
             <div class="section-title">Durasi Main</div>
             <div class="dur-grid">
@@ -604,8 +603,7 @@
 
         let canteenCart = {};
 
-        function selectPc(id, name, pricePerHour, status) {
-            if (status === 'in_use') return;
+        function selectPc(id, name, pricePerHour) {
 
             document.querySelectorAll('.pc-box').forEach(el => el.classList.remove('selected'));
             document.getElementById('pc_' + id).classList.add('selected');

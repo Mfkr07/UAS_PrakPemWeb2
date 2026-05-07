@@ -39,7 +39,16 @@ class AdminController extends Controller
     public function pcIndex()
     {
         $computers = \App\Models\Computer::orderBy('name')->get();
-        return view('admin.pc_index', compact('computers'));
+
+        // Load upcoming bookings for each PC (today and future, booked or active)
+        $upcomingBookings = \App\Models\Booking::whereIn('status', ['booked', 'active'])
+            ->where('end_time', '>=', now())
+            ->with('user')
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->groupBy('computer_id');
+
+        return view('admin.pc_index', compact('computers', 'upcomingBookings'));
     }
 
     public function pcStore(Request $request)
@@ -76,6 +85,10 @@ class AdminController extends Controller
             $query->whereHas('computer', function($q) use ($request) {
                 $q->where('price_per_hour', $request->pc_category);
             });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         $bookings = $query->get();
@@ -121,20 +134,50 @@ class AdminController extends Controller
         return Excel::download(new BookingsExport($bookings), 'rekapitulasi_pendapatan.xlsx');
     }
 
-    public function finishBooking($id)
+    /**
+     * Admin manually checks in a booked booking.
+     * Changes booking status: booked → active
+     * Changes PC status: available → in_use
+     */
+    public function checkinBooking($id)
     {
         $booking = \App\Models\Booking::findOrFail($id);
-        
+
+        if ($booking->status !== 'booked') {
+            return redirect()->route('admin.bookings.index')->with('error', 'Booking ini tidak dalam status "booked".');
+        }
+
+        $booking->update(['status' => 'active']);
+
+        if ($booking->computer) {
+            $booking->computer->update(['status' => 'in_use']);
+        }
+
+        return redirect()->route('admin.bookings.index')->with('success', 'Check-In berhasil! PC ' . ($booking->computer->name ?? '') . ' sekarang aktif digunakan.');
+    }
+
+    /**
+     * Admin manually checks out an active booking.
+     * Changes booking status: active → completed
+     * Changes PC status: in_use → available
+     */
+    public function checkoutBooking($id)
+    {
+        $booking = \App\Models\Booking::findOrFail($id);
+
+        if ($booking->status !== 'active') {
+            return redirect()->route('admin.bookings.index')->with('error', 'Booking ini tidak dalam status "active".');
+        }
+
+        $booking->update([
+            'status' => 'completed',
+        ]);
+
         if ($booking->computer) {
             $booking->computer->update(['status' => 'available']);
         }
-        
-        $booking->update([
-            'status' => 'completed',
-            'end_time' => now()
-        ]);
 
-        return redirect()->route('admin.bookings.index')->with('success', 'Sesi berhasil diakhiri.');
+        return redirect()->route('admin.bookings.index')->with('success', 'Check-Out berhasil! Sesi PC ' . ($booking->computer->name ?? '') . ' telah selesai.');
     }
 
     public function usersIndex()

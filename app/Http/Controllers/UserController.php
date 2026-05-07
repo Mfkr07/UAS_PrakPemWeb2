@@ -3,38 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
     public function home()
     {
-        // Pastikan status booking di-update (terutama jika scheduler tidak jalan)
-        \Illuminate\Support\Facades\Artisan::call('bookings:process');
-
-        $activeBooking = \App\Models\Booking::where('user_id', auth()->id())
-                            ->whereIn('status', ['pending', 'active'])
-                            ->latest()
-                            ->first();
+        // Get all active bookings (booked or active) for the user
+        $activeBookings = \App\Models\Booking::where('user_id', auth()->id())
+                            ->whereIn('status', ['booked', 'active'])
+                            ->with('computer')
+                            ->orderBy('start_time', 'asc')
+                            ->get();
 
         $historyBookings = \App\Models\Booking::where('user_id', auth()->id())
-                            ->where('status', 'completed')
+                            ->whereIn('status', ['completed', 'cancelled'])
+                            ->with('computer')
                             ->latest()
                             ->take(5)
                             ->get();
 
-        return view('user.home', compact('activeBooking', 'historyBookings'));
+        return view('user.home', compact('activeBookings', 'historyBookings'));
     }
 
     public function billing()
     {
-        $activeBooking = \App\Models\Booking::where('user_id', auth()->id())
-                            ->whereIn('status', ['pending', 'active'])
-                            ->first();
-                            
-        if ($activeBooking) {
-            return redirect()->route('home')->with('error', 'Anda masih memiliki sesi aktif atau tiket pending.');
-        }
-
         $computers = \App\Models\Computer::orderBy('name')->get();
         $canteenItems = \App\Models\CanteenItem::all();
         
@@ -69,9 +62,9 @@ class UserController extends Controller
 
         $endTime = $bookingTime->copy()->addHours($durationHours);
 
-        // Check for overlapping bookings
+        // Check for overlapping bookings (booked or active)
         $overlapping = \App\Models\Booking::where('computer_id', $computer->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['booked', 'active'])
             ->where(function($query) use ($bookingTime, $endTime) {
                 $query->where('start_time', '<', $endTime)
                       ->where('end_time', '>', $bookingTime);
@@ -119,7 +112,7 @@ class UserController extends Controller
             'start_time' => $bookingTime,
             'end_time' => $endTime,
             'total_price' => $totalPrice,
-            'status' => 'pending'
+            'status' => 'booked'
         ]);
 
         foreach ($orderedItems as $orderedItem) {
@@ -141,78 +134,38 @@ class UserController extends Controller
         return view('user.billing_success', compact('booking'));
     }
 
+    public function receiptView($id)
+    {
+        $booking = \App\Models\Booking::where('user_id', auth()->id())
+            ->with(['user', 'computer', 'canteenItems.canteenItem'])
+            ->findOrFail($id);
 
+        return view('user.receipt', compact('booking'));
+    }
+
+    public function receiptPdf($id)
+    {
+        $booking = \App\Models\Booking::where('user_id', auth()->id())
+            ->with(['user', 'computer', 'canteenItems.canteenItem'])
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('user.receipt_pdf', compact('booking'));
+        $pdf->setPaper([0, 0, 300, 600], 'portrait');
+
+        return $pdf->download('struk_booking_WA-' . str_pad($booking->id, 4, '0', STR_PAD_LEFT) . '.pdf');
+    }
 
     public function cancelBooking($id)
     {
         $booking = \App\Models\Booking::where('user_id', auth()->id())
             ->where('id', $id)
-            ->where('status', 'pending')
+            ->where('status', 'booked')
             ->firstOrFail();
 
-        $user = auth()->user();
-        $user->wallet_balance += $booking->total_price;
-        $user->save();
+        // Cancel without refund
+        $booking->update(['status' => 'cancelled']);
 
-        $booking->delete();
-
-        return redirect()->route('home')->with('success', 'Booking berhasil dibatalkan dan dana telah dikembalikan ke e-Wallet Anda.');
-    }
-
-    public function endSession($id)
-    {
-        $booking = \App\Models\Booking::where('user_id', auth()->id())
-            ->where('id', $id)
-            ->where('status', 'active')
-            ->firstOrFail();
-
-        if ($booking->computer) {
-            $booking->computer->update(['status' => 'available']);
-        }
-        
-        $booking->update([
-            'status' => 'completed',
-            'end_time' => now()
-        ]);
-
-        return redirect()->route('home')->with('success', 'Sesi berhasil diakhiri.');
-    }
-
-    public function book($id)
-    {
-        $computer = \App\Models\Computer::findOrFail($id);
-        if ($computer->status === 'in_use') {
-            return redirect()->route('home')->with('error', 'PC sedang digunakan.');
-        }
-        return view('user.book', compact('computer'));
-    }
-
-    public function store(Request $request, $id)
-    {
-        $request->validate([
-            'duration_hours' => 'required|integer|min:1|max:24',
-        ]);
-
-        $computer = \App\Models\Computer::findOrFail($id);
-        
-        if ($computer->status === 'in_use') {
-            return redirect()->route('home')->with('error', 'PC sedang digunakan.');
-        }
-
-        $total_price = $computer->price_per_hour * $request->duration_hours;
-        
-        \App\Models\Booking::create([
-            'user_id' => auth()->id(),
-            'computer_id' => $computer->id,
-            'duration_hours' => $request->duration_hours,
-            'start_time' => now(),
-            'total_price' => $total_price,
-            'end_time' => now()->addHours($request->duration_hours),
-        ]);
-
-        $computer->update(['status' => 'in_use']);
-
-        return redirect()->route('history')->with('success', 'Booking berhasil!');
+        return redirect()->route('home')->with('success', 'Booking berhasil dibatalkan. Catatan: saldo tidak dikembalikan.');
     }
 
     public function history()

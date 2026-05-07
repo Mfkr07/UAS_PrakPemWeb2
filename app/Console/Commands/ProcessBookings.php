@@ -13,32 +13,13 @@ class ProcessBookings extends Command
      */
     protected $signature = 'bookings:process';
 
-    protected $description = 'Process pending bookings to active and active to completed based on schedule';
+    protected $description = 'Reserved command — booking status is now managed manually by admin (check-in/check-out).';
 
     public function handle()
     {
-        $now = now();
-
-        // 1. Activate pending bookings that have reached their start time
-        $pendingBookings = \App\Models\Booking::where('status', 'pending')
-            ->where('start_time', '<=', $now)
-            ->get();
-
-        foreach ($pendingBookings as $booking) {
-            $booking->update(['status' => 'active']);
-            $booking->computer->update(['status' => 'in_use']);
-            $this->info("Activated booking ID: {$booking->id}");
-        }
-
-        // 2. Complete active bookings that have reached their end time
-        $activeBookings = \App\Models\Booking::where('status', 'active')
-            ->where('end_time', '<=', $now)
-            ->get();
-
-        foreach ($activeBookings as $booking) {
-            $booking->update(['status' => 'completed']);
-            $booking->computer->update(['status' => 'available']);
-            $this->info("Completed booking ID: {$booking->id}");
-        }
+        // All booking status transitions are now handled manually by admin:
+        // booked → active (admin check-in)
+        // active → completed (admin check-out)
+        $this->info('No automatic processing needed. Bookings are managed manually by admin.');
     }
 }

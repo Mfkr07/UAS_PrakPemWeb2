@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PublicController::class, 'landing'])->name('landing');
 
 Route::middleware('auth')->group(function () {
-    // Breeze Profile Routes (Optional, can integrate into UserController or keep separate)
-    // We will keep them to allow password updates and account deletion if the user wants later,
-    // but the main profile view will be handled by UserController to match the current design.
+    // Breeze Profile Routes
     Route::get('/profile-breeze', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile-breeze', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile-breeze', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -21,10 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/billing', [UserController::class, 'billing'])->name('billing');
     Route::post('/billing', [UserController::class, 'processBilling'])->name('billing.process');
     Route::get('/billing/success', [UserController::class, 'billingSuccess'])->name('billing.success');
-    Route::get('/book/{id}', [UserController::class, 'book'])->name('user.book');
-    Route::post('/book/{id}', [UserController::class, 'store'])->name('user.store');
-    Route::post('/book/{id}/cancel', [UserController::class, 'cancelBooking'])->name('user.cancel_booking');
-    Route::post('/book/{id}/end', [UserController::class, 'endSession'])->name('user.end_session');
+    Route::get('/booking/{id}/receipt', [UserController::class, 'receiptView'])->name('booking.receipt');
+    Route::get('/booking/{id}/receipt/pdf', [UserController::class, 'receiptPdf'])->name('booking.receipt.pdf');
+    Route::post('/booking/{id}/cancel', [UserController::class, 'cancelBooking'])->name('booking.cancel');
     Route::get('/history', [UserController::class, 'history'])->name('history');
     
     // Custom Profile Route
@@ -44,7 +41,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/bookings', [AdminController::class, 'bookingIndex'])->name('bookings.index');
         Route::get('/bookings/export/pdf', [AdminController::class, 'exportPdf'])->name('bookings.export.pdf');
         Route::get('/bookings/export/excel', [AdminController::class, 'exportExcel'])->name('bookings.export.excel');
-        Route::post('/bookings/{id}/finish', [AdminController::class, 'finishBooking'])->name('bookings.finish');
+        Route::post('/bookings/{id}/checkin', [AdminController::class, 'checkinBooking'])->name('bookings.checkin');
+        Route::post('/bookings/{id}/checkout', [AdminController::class, 'checkoutBooking'])->name('bookings.checkout');
 
         Route::get('/users', [AdminController::class, 'usersIndex'])->name('users.index');
         Route::delete('/users/{id}', [AdminController::class, 'usersDestroy'])->name('users.destroy');

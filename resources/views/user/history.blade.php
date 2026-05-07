@@ -1,5 +1,50 @@
 @extends('layouts.dashboard')
 
+@section('styles')
+    <style>
+        .btn-receipt {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-receipt-view {
+            background: rgba(168, 85, 247, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .btn-receipt-view:hover {
+            background: rgba(168, 85, 247, 0.2);
+            color: #d8b4fe;
+        }
+
+        .btn-receipt-pdf {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .btn-receipt-pdf:hover {
+            background: rgba(6, 182, 212, 0.2);
+            color: #22d3ee;
+        }
+
+        .btn-receipt svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+        }
+    </style>
+@endsection
+
 @section('content')
 <div class="row align-items-center mb-4">
     <div class="col-md-8">
@@ -18,8 +63,9 @@
                         <th class="py-3 text-secondary fw-semibold">Komputer</th>
                         <th class="py-3 text-secondary fw-semibold">Waktu Mulai</th>
                         <th class="py-3 text-secondary fw-semibold">Durasi</th>
-                        <th class="py-3 text-secondary fw-semibold">Status PC</th>
-                        <th class="py-3 pe-4 text-end text-secondary fw-semibold">Total Tagihan</th>
+                        <th class="py-3 text-secondary fw-semibold">Status</th>
+                        <th class="py-3 text-secondary fw-semibold">Total Tagihan</th>
+                        <th class="py-3 pe-4 text-end text-secondary fw-semibold">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="border-top-0">
@@ -37,17 +83,33 @@
                             <td>{{ $booking->start_time->format('d M Y, H:i') }}</td>
                             <td>{{ $booking->duration_hours }} Jam</td>
                             <td>
-                                @if($booking->computer && $booking->computer->status == 'in_use')
-                                    <span class="badge bg-warning text-dark px-2 py-1"><i class="bi bi-clock-history me-1"></i>Sedang Main</span>
-                                @else
-                                    <span class="badge bg-success bg-opacity-10 text-success px-2 py-1"><i class="bi bi-check-circle me-1"></i>Selesai</span>
+                                @if($booking->status === 'booked')
+                                    <span class="badge bg-warning text-dark px-2 py-1">Booked</span>
+                                @elseif($booking->status === 'active')
+                                    <span class="badge bg-info text-white px-2 py-1">Aktif</span>
+                                @elseif($booking->status === 'completed')
+                                    <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Selesai</span>
+                                @elseif($booking->status === 'cancelled')
+                                    <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">Dibatalkan</span>
                                 @endif
                             </td>
-                            <td class="pe-4 text-end fw-bold text-dark">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
+                            <td class="fw-bold text-dark">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
+                            <td class="pe-4 text-end">
+                                <div style="display: flex; gap: 0.35rem; justify-content: flex-end;">
+                                    <a href="{{ route('booking.receipt', $booking->id) }}" class="btn-receipt btn-receipt-view" title="Lihat Struk">
+                                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                        Struk
+                                    </a>
+                                    <a href="{{ route('booking.receipt.pdf', $booking->id) }}" class="btn-receipt btn-receipt-pdf" title="Download PDF">
+                                        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                                        PDF
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="7" class="text-center py-5">
                                 <i class="bi bi-journal-x text-muted" style="font-size: 3rem;"></i>
                                 <p class="text-muted mt-3 mb-0">Belum ada riwayat pesanan.</p>
                             </td>
@@ -59,3 +121,4 @@
     </div>
 </div>
 @endsection
+

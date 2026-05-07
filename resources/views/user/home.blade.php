@@ -81,144 +81,200 @@
             background-color: #d8b4fe;
         }
 
-        /* Tiket View */
-        .ticket-card {
+        /* Booking Cards Grid */
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .booking-card {
             background: linear-gradient(135deg, rgba(21, 17, 28, 1) 0%, rgba(15, 11, 21, 1) 100%);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            display: flex;
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 4rem;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transition: all 0.25s ease;
         }
 
-        .ticket-left {
-            flex: 2;
-            padding: 2.5rem;
-            border-right: 1px dashed rgba(255, 255, 255, 0.1);
-            position: relative;
+        .booking-card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .ticket-left::before {
+        .booking-card::before {
             content: '';
             position: absolute;
             left: 0;
             top: 0;
             width: 4px;
             height: 100%;
+        }
+
+        .booking-card.status-booked::before {
             background: linear-gradient(to bottom, #f59e0b, #d97706);
         }
 
-        .ticket-right {
-            flex: 1;
-            padding: 2.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.2);
+        .booking-card.status-active::before {
+            background: linear-gradient(to bottom, #10b981, #059669);
         }
 
-        .info-label {
-            font-size: 0.625rem;
+        .booking-card-inner {
+            padding: 1.75rem;
+        }
+
+        .booking-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .booking-code {
+            font-size: 0.6rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
             font-weight: 800;
+            margin-bottom: 0.25rem;
         }
 
-        .info-value {
-            font-size: 1.25rem;
+        .booking-code-value {
+            font-size: 1.125rem;
             font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 2rem;
-        }
-
-        .info-sub {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 500;
-            display: block;
-            margin-top: 0.25rem;
-        }
-
-        .ticket-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 0;
-        }
-
-        .ticket-grid .info-value {
-            margin-bottom: 0;
+            color: var(--purple-light);
         }
 
         .status-badge {
-            background-color: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            padding: 0.35rem 0.75rem;
+            padding: 0.3rem 0.65rem;
             border-radius: 4px;
-            font-size: 0.625rem;
+            font-size: 0.6rem;
             font-weight: 800;
             text-transform: uppercase;
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            position: absolute;
-            top: 2.5rem;
-            right: 2.5rem;
+            gap: 0.3rem;
+            letter-spacing: 0.5px;
         }
 
         .status-badge::before {
             content: '';
-            width: 6px;
-            height: 6px;
-            background-color: #f59e0b;
+            width: 5px;
+            height: 5px;
             border-radius: 50%;
         }
 
-        .timer-label {
-            font-size: 0.625rem;
+        .badge-booked {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .badge-booked::before {
+            background-color: #f59e0b;
+        }
+
+        .badge-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-active::before {
+            background-color: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .booking-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.6rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 0.5rem;
             font-weight: 800;
-            text-align: center;
+            margin-bottom: 0.25rem;
         }
 
-        .timer-value {
-            font-size: 2rem;
-            font-weight: 800;
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .detail-value.cyan {
+            color: #06b6d4;
+        }
+
+        .detail-value.amber {
             color: #f59e0b;
-            margin-bottom: 1.5rem;
-            text-align: center;
         }
 
-        .btn-action {
-            background-color: var(--purple-light);
-            color: var(--bg-dark);
-            border: none;
-            padding: 0.875rem 1.5rem;
-            border-radius: 4px;
-            font-weight: 800;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
+        .booking-card-footer {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
         }
 
-        .btn-action:hover {
-            background-color: #d8b4fe;
+        .btn-card {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.65rem 1rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-card svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .btn-card-receipt {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--purple-light);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .btn-card-receipt:hover {
+            background: rgba(168, 85, 247, 0.2);
+            color: #d8b4fe;
+        }
+
+        .btn-card-cancel {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-card-cancel:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
         }
 
         /* History Section */
@@ -242,6 +298,13 @@
             display: flex;
             align-items: center;
             gap: 1.25rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+        }
+
+        .history-card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
         }
 
         .history-icon {
@@ -289,126 +352,6 @@
             color: var(--text-muted);
             text-align: right;
         }
-
-        /* Online View */
-        .online-view {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
-        }
-
-        .online-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 4rem;
-            text-align: center;
-            width: 100%;
-            max-width: 700px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .status-online {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            padding: 0.35rem 0.875rem;
-            border-radius: 4px;
-            font-size: 0.625rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .status-online::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background-color: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #10b981;
-        }
-
-        .huge-timer {
-            font-size: 6rem;
-            font-weight: 800;
-            color: #06b6d4;
-            text-shadow: 0 0 40px rgba(6, 182, 212, 0.4);
-            margin-bottom: 3rem;
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-            letter-spacing: -2px;
-        }
-
-        .user-info-row {
-            display: flex;
-            justify-content: center;
-            gap: 5rem;
-            margin-bottom: 3.5rem;
-            padding-top: 2.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .info-col {
-            text-align: center;
-        }
-
-        .info-col .label {
-            font-size: 0.625rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .info-col .val {
-            font-size: 1.125rem;
-            font-weight: 700;
-        }
-
-        .val-highlight {
-            color: #f59e0b;
-        }
-
-        .action-row {
-            display: flex;
-            justify-content: center;
-            gap: 1.25rem;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 0.875rem 1.5rem;
-            border-radius: 4px;
-            font-weight: 800;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-outline:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-        }
-
-        .btn-outline.active-btn {
-            color: var(--purple-light);
-            border-color: var(--purple-main);
-            background-color: rgba(168, 85, 247, 0.1);
-        }
     </style>
 @endsection
 
@@ -428,10 +371,10 @@
         </div>
     @endif
 
-    @if(!$activeBooking)
-        <h1 class="page-title">Selamat Datang, {{ auth()->user()->name }}</h1>
-        <p class="page-subtitle">Siap untuk memulai sesi permainan berikutnya?</p>
+    <h1 class="page-title">Selamat Datang, {{ auth()->user()->name }}</h1>
+    <p class="page-subtitle">Kelola booking dan pantau sesi bermain Anda.</p>
 
+    @if($activeBookings->count() === 0)
         <div class="empty-state">
             <div class="empty-icon">
                 <svg viewBox="0 0 24 24">
@@ -439,9 +382,8 @@
                         d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z" />
                 </svg>
             </div>
-            <div class="empty-title">Tidak Ada Sesi Aktif</div>
-            <div class="empty-desc">Anda belum memesan PC untuk sesi bermain saat ini. Pesan sekarang untuk mendapatkan PC
-                favorit Anda.</div>
+            <div class="empty-title">Tidak Ada Booking Aktif</div>
+            <div class="empty-desc">Anda belum memiliki booking. Pesan PC sekarang untuk memulai sesi bermain.</div>
             <a href="{{ route('billing') }}" class="btn-book">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -449,143 +391,98 @@
                 BOOKING PC SEKARANG
             </a>
         </div>
-    @elseif($activeBooking->status === 'pending')
-        <!-- TICKET VIEW -->
-        <h1 class="page-title">Tiket Saya</h1>
-        <p class="page-subtitle">Kelola sesi bermain dan check-in PC Anda.</p>
-
-        <div class="ticket-card">
-            <div class="ticket-left">
-                <div class="status-badge">Menunggu Check-In</div>
-
-                <div class="info-label">KODE BOOKING</div>
-                <div class="info-value" style="color: var(--purple-light);">
-                    #WA-{{ str_pad($activeBooking->id, 4, '0', STR_PAD_LEFT) }}</div>
-
-                <div class="ticket-grid">
-                    <div>
-                        <div class="info-label">STASIUN</div>
-                        <div class="info-value">{{ $activeBooking->computer->name ?? 'Dihapus' }} <span class="info-sub">Area
-                                Standard</span></div>
-                    </div>
-                    <div>
-                        <div class="info-label">DURASI</div>
-                        <div class="info-value" style="color: #06b6d4;">
-                            {{ $activeBooking->package_type === 'night' ? 'Paket Malam' : $activeBooking->duration_hours . ' Jam' }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="ticket-right">
-                <div class="timer-label">WAKTU MULAI SESI</div>
-                <div class="timer-value" id="start-timer">{{ $activeBooking->start_time->format('H:i') }}</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 1rem;">Sesi akan otomatis berjalan pada jadwal tersebut.</div>
-                <form action="{{ route('user.cancel_booking', $activeBooking->id) }}" method="POST" style="width: 100%;">
-                    @csrf
-                    <button type="submit" class="btn-action" style="background-color: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); margin-top: 1rem;" onclick="return confirm('Yakin ingin membatalkan booking? Dana akan dikembalikan ke e-Wallet.')">
-                        Batalkan Booking
-                    </button>
-                </form>
-            </div>
-        </div>
-        <script>
-            const startTimeStr = "{{ $activeBooking->start_time->toIso8601String() }}";
-            const startTime = new Date(startTimeStr).getTime();
-
-            const checkInInterval = setInterval(() => {
-                const now = new Date().getTime();
-                if (now >= startTime) {
-                    clearInterval(checkInInterval);
-                    window.location.reload();
-                }
-            }, 1000);
-        </script>
     @else
-        <!-- ONLINE VIEW -->
-        <div class="online-view">
-            <div class="online-card">
-                <div class="status-online">STATUS ONLINE</div>
-                <div class="huge-timer" id="session-timer">Loading...</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 class="section-title" style="margin-bottom: 0;">Booking Aktif Saya</h2>
+            <a href="{{ route('billing') }}" class="btn-book" style="padding: 0.65rem 1.25rem; font-size: 0.75rem;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+                TAMBAH BOOKING
+            </a>
+        </div>
 
-                <div class="user-info-row">
-                    <div class="info-col">
-                        <div class="label">USER</div>
-                        <div class="val">{{ auth()->user()->name }}</div>
-                    </div>
-                    <div class="info-col">
-                        <div class="label">PAKET AKTIF</div>
-                        <div class="val val-highlight">
-                            {{ $activeBooking->package_type === 'night' ? 'Paket Malam' : $activeBooking->duration_hours . ' Jam' }}
+        <div class="bookings-grid">
+            @foreach($activeBookings as $booking)
+                <div class="booking-card status-{{ $booking->status }}">
+                    <div class="booking-card-inner">
+                        <div class="booking-card-header">
+                            <div>
+                                <div class="booking-code">KODE BOOKING</div>
+                                <div class="booking-code-value">#WA-{{ str_pad($booking->id, 4, '0', STR_PAD_LEFT) }}</div>
+                            </div>
+                            @if($booking->status === 'booked')
+                                <span class="status-badge badge-booked">Menunggu Check-In</span>
+                            @else
+                                <span class="status-badge badge-active">Sedang Bermain</span>
+                            @endif
+                        </div>
+
+                        <div class="booking-detail-grid">
+                            <div>
+                                <div class="detail-label">Stasiun</div>
+                                <div class="detail-value">{{ $booking->computer->name ?? 'Dihapus' }}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Durasi</div>
+                                <div class="detail-value cyan">{{ $booking->duration_hours }} Jam</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Waktu Mulai</div>
+                                <div class="detail-value">{{ $booking->start_time->format('d M, H:i') }}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Waktu Selesai</div>
+                                <div class="detail-value">{{ $booking->end_time->format('d M, H:i') }}</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <div class="detail-label">Total Dibayar</div>
+                            <div class="detail-value amber">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
+                        </div>
+
+                        <div class="booking-card-footer">
+                            <a href="{{ route('booking.receipt', $booking->id) }}" class="btn-card btn-card-receipt">
+                                <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                Lihat Struk
+                            </a>
+                            @if($booking->status === 'booked')
+                                <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="flex: 1;">
+                                    @csrf
+                                    <button type="submit" class="btn-card btn-card-cancel" style="width: 100%;" onclick="return confirm('Yakin ingin membatalkan? Saldo TIDAK akan dikembalikan.')">
+                                        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                                        Batalkan
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>
-
-                <div class="action-row">
-                    <form action="{{ route('user.end_session', $activeBooking->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn-outline" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.5);" onclick="return confirm('Yakin ingin mengakhiri sesi lebih awal?')">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 4px;">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-4-4h8V8H8v8z"/>
-                            </svg>
-                            Akhiri Sesi
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            // Actual server end time
-            const endTimeStr = "{{ $activeBooking->end_time->toIso8601String() }}";
-            const endTime = new Date(endTimeStr).getTime();
-
-            const timerInterval = setInterval(() => {
-                const now = new Date().getTime();
-                const distance = endTime - now;
-
-                if (distance <= 0) {
-                    clearInterval(timerInterval);
-                    document.getElementById('session-timer').innerText = "00:00:00";
-                    // Optionally reload to let server handle completion
-                    window.location.reload();
-                    return;
-                }
-
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                const h = hours.toString().padStart(2, '0');
-                const m = minutes.toString().padStart(2, '0');
-                const s = seconds.toString().padStart(2, '0');
-
-                document.getElementById('session-timer').innerText = `${h}:${m}:${s}`;
-            }, 1000);
-        </script>
-    @endif
-
-    @if(!$activeBooking || $activeBooking->status === 'pending')
-        <h2 class="section-title">Riwayat Tiket</h2>
-        <div class="history-grid">
-            @forelse($historyBookings as $history)
-                <div class="history-card">
-                    <div class="history-icon"><svg viewBox="0 0 24 24">
-                            <path
-                                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                        </svg></div>
-                    <div class="history-details">
-                        <div class="history-id">#WA-{{ str_pad($history->id, 4, '0', STR_PAD_LEFT) }}</div>
-                        <div class="history-time">{{ $history->created_at->diffForHumans() }}</div>
-                    </div>
-                    <div>
-                        <div class="history-pc">{{ $history->computer->name ?? '-' }}</div>
-                        <div class="history-status">Selesai</div>
-                    </div>
-                </div>
-            @empty
-                <div style="color: var(--text-muted); font-size: 0.875rem;">Belum ada riwayat pesanan.</div>
-            @endforelse
+            @endforeach
         </div>
     @endif
+
+    <h2 class="section-title">Riwayat Tiket</h2>
+    <div class="history-grid">
+        @forelse($historyBookings as $history)
+            <a href="{{ route('booking.receipt', $history->id) }}" class="history-card">
+                <div class="history-icon"><svg viewBox="0 0 24 24">
+                        <path
+                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                    </svg></div>
+                <div class="history-details">
+                    <div class="history-id">#WA-{{ str_pad($history->id, 4, '0', STR_PAD_LEFT) }}</div>
+                    <div class="history-time">{{ $history->created_at->diffForHumans() }}</div>
+                </div>
+                <div>
+                    <div class="history-pc">{{ $history->computer->name ?? '-' }}</div>
+                    <div class="history-status">{{ ucfirst($history->status) }}</div>
+                </div>
+            </a>
+        @empty
+            <div style="color: var(--text-muted); font-size: 0.875rem;">Belum ada riwayat pesanan.</div>
+        @endforelse
+    </div>
 
 @endsection

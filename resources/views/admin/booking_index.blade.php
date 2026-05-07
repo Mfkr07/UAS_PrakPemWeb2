@@ -35,12 +35,85 @@
         align-items: center;
         gap: 0.35rem;
     }
-    .status-cleared { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
-    .status-cleared::before { content: ''; width: 6px; height: 6px; background-color: #10b981; border-radius: 50%; }
+    .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
     
-    .btn-stop { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.625rem 1rem; border-radius: 4px; font-size: 0.75rem; font-weight: 800; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn-stop:hover { background: #ef4444; color: white; }
-    .btn-stop svg { width: 14px; height: 14px; fill: currentColor; }
+    .status-booked { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+    .status-booked::before { background-color: #f59e0b; }
+    
+    .status-active { background-color: rgba(6, 182, 212, 0.1); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.2); }
+    .status-active::before { background-color: #06b6d4; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    
+    .status-completed { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-completed::before { background-color: #10b981; }
+
+    .status-cancelled { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .status-cancelled::before { background-color: #ef4444; }
+
+    .btn-action-admin {
+        padding: 0.625rem 1rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid;
+    }
+
+    .btn-checkin {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: #10b981;
+    }
+    .btn-checkin:hover {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-checkout {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+    }
+    .btn-checkout:hover {
+        background: #ef4444;
+        color: white;
+    }
+    
+    .btn-action-admin svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .btn-export {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        padding: 0.625rem 1rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+    }
+    .btn-export:hover { background: rgba(239, 68, 68, 0.2); }
+    .btn-export.green { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981; }
+    .btn-export.green:hover { background: rgba(16, 185, 129, 0.2); }
+
+    .time-remaining {
+        font-size: 0.625rem;
+        color: #f59e0b;
+        font-weight: 700;
+        margin-top: 0.25rem;
+    }
 </style>
 @endsection
 
@@ -48,23 +121,31 @@
 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem;">
     <div>
         <h1 class="page-title">Riwayat Billing</h1>
-        <p class="page-subtitle" style="margin-bottom: 0;">Pantau PC yang sedang digunakan dan lihat rekaman transaksi masuk.</p>
+        <p class="page-subtitle" style="margin-bottom: 0;">Kelola check-in, check-out, dan pantau seluruh transaksi booking.</p>
     </div>
     <div style="display: flex; gap: 1rem;">
-        <a href="{{ route('admin.bookings.export.excel', request()->all()) }}" class="btn-stop" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981; text-decoration: none;">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 4px;">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7.9 14.8l-1.6-4.5h-1.4v4.5H6.8V6.5h3.4c2.5 0 4.1 1.6 4.1 3.9 0 1.8-1.1 3.1-2.6 3.6l2.1 5.3h-1.5zM8.2 11.9h1.9c1.6 0 2.5-1 2.5-2.5S11.7 6.9 10.1 6.9H8.2v5z"/>
-            </svg>
+        <a href="{{ route('admin.bookings.export.excel', request()->all()) }}" class="btn-export green">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             Export Excel
         </a>
-        <a href="{{ route('admin.bookings.export.pdf', request()->all()) }}" class="btn-stop" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; text-decoration: none;">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 4px;">
-                <path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .8-.7 1.5-1.5 1.5H9v2H7.5V7H10c.8 0 1.5.7 1.5 1.5v1zm5 2c0 .8-.7 1.5-1.5 1.5h-2.5V7H15c.8 0 1.5.7 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/>
-            </svg>
+        <a href="{{ route('admin.bookings.export.pdf', request()->all()) }}" class="btn-export">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             Export PDF
         </a>
     </div>
 </div>
+
+@if(session('success'))
+    <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; font-size: 0.875rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; font-size: 0.875rem; border: 1px solid rgba(239, 68, 68, 0.2);">
+        {{ session('error') }}
+    </div>
+@endif
 
 <form method="GET" action="{{ route('admin.bookings.index') }}" style="display: flex; gap: 1rem; margin-bottom: 2rem; background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); align-items: flex-end;">
     <div style="flex: 1;">
@@ -82,12 +163,22 @@
             @endforeach
         </select>
     </div>
+    <div style="flex: 1;">
+        <label style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block; font-weight: 800; text-transform: uppercase;">Status</label>
+        <select name="status" style="width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.75rem; border-radius: 4px;">
+            <option value="" style="background: var(--bg-card); color: var(--text-main);">Semua Status</option>
+            <option value="booked" style="background: var(--bg-card); color: var(--text-main);" {{ request('status') == 'booked' ? 'selected' : '' }}>Booked</option>
+            <option value="active" style="background: var(--bg-card); color: var(--text-main);" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+            <option value="completed" style="background: var(--bg-card); color: var(--text-main);" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+            <option value="cancelled" style="background: var(--bg-card); color: var(--text-main);" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+        </select>
+    </div>
     <div style="display: flex; gap: 0.5rem;">
-        <button type="submit" class="btn-stop" style="background: var(--purple-light); border-color: var(--purple-main); color: var(--bg-dark); padding: 0.85rem 1.5rem;">
+        <button type="submit" class="btn-action-admin btn-checkin" style="padding: 0.85rem 1.5rem;">
             Terapkan Filter
         </button>
-        @if(request()->filled('date') || request()->filled('pc_category'))
-            <a href="{{ route('admin.bookings.index') }}" class="btn-stop" style="background: transparent; border-color: var(--border-color); color: var(--text-muted); padding: 0.85rem 1.5rem; text-decoration: none;">Reset</a>
+        @if(request()->filled('date') || request()->filled('pc_category') || request()->filled('status'))
+            <a href="{{ route('admin.bookings.index') }}" class="btn-export" style="padding: 0.85rem 1.5rem; background: transparent; border-color: var(--border-color); color: var(--text-muted);">Reset</a>
         @endif
     </div>
 </form>
@@ -99,6 +190,7 @@
                 <th>ID Order</th>
                 <th>Penyewa</th>
                 <th>Rig / PC</th>
+                <th>Status</th>
                 <th>Tarif Terbayar</th>
                 <th>Waktu (Mulai - Selesai)</th>
                 <th style="text-align: right;">Aksi</th>
@@ -116,6 +208,9 @@
                     </td>
                     <td class="pc-name">{{ $booking->computer->name ?? 'Dihapus' }}</td>
                     <td>
+                        <span class="status-badge status-{{ $booking->status }}">{{ ucfirst($booking->status) }}</span>
+                    </td>
+                    <td>
                         <div class="price">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
                         <div class="duration">Durasi: {{ $booking->duration_hours }} Jam</div>
                     </td>
@@ -123,26 +218,47 @@
                         {{ $booking->start_time ? $booking->start_time->format('d M Y, H:i') : '--:--' }} <br>
                         <span style="color: var(--purple-light);">sampai</span> <br>
                         {{ $booking->end_time ? $booking->end_time->format('d M Y, H:i') : '--:--' }}
+                        @if($booking->status === 'active' && $booking->end_time)
+                            @php
+                                $remaining = now()->diff($booking->end_time);
+                                $isOverdue = now()->gt($booking->end_time);
+                            @endphp
+                            <div class="time-remaining">
+                                @if($isOverdue)
+                                    ⚠️ SUDAH LEWAT {{ $remaining->h }}j {{ $remaining->i }}m
+                                @else
+                                    ⏱ Sisa: {{ $remaining->h }}j {{ $remaining->i }}m
+                                @endif
+                            </div>
+                        @endif
                     </td>
                     <td style="text-align: right;">
-                        @if($booking->status === 'active')
-                            <form action="{{ route('admin.bookings.finish', $booking->id) }}" method="POST">
+                        @if($booking->status === 'booked')
+                            <form action="{{ route('admin.bookings.checkin', $booking->id) }}" method="POST" style="display: inline;">
                                 @csrf
-                                <button type="submit" class="btn-stop">
-                                    <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
-                                    Force Stop
+                                <button type="submit" class="btn-action-admin btn-checkin" onclick="return confirm('Check-In pelanggan ini? PC akan diubah menjadi IN USE.')">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                    Check-In
                                 </button>
                             </form>
-                        @elseif($booking->status === 'pending')
-                            <span class="status-badge" style="background-color: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2);">Pending</span>
-                        @else
-                            <span class="status-badge status-cleared">Cleared</span>
+                        @elseif($booking->status === 'active')
+                            <form action="{{ route('admin.bookings.checkout', $booking->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn-action-admin btn-checkout" onclick="return confirm('Check-Out pelanggan ini? Sesi akan diakhiri dan PC menjadi available.')">
+                                    <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+                                    Check-Out
+                                </button>
+                            </form>
+                        @elseif($booking->status === 'completed')
+                            <span class="status-badge status-completed">Selesai</span>
+                        @elseif($booking->status === 'cancelled')
+                            <span class="status-badge status-cancelled">Dibatalkan</span>
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 5rem;">
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 5rem;">
                         <svg viewBox="0 0 24 24" width="64" height="64" fill="rgba(255,255,255,0.05)" style="margin-bottom: 1rem;"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                         <div>Belum ada riwayat pesanan (billing).</div>
                     </td>

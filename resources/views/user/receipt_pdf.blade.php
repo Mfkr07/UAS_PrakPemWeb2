@@ -292,6 +292,11 @@
             background-color: #dcfce7;
             color: #16a34a;
         }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
     </style>
 </head>
 <body>

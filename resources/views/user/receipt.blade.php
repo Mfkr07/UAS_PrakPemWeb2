@@ -348,6 +348,16 @@
             background: #10b981;
         }
 
+        .r-status-cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .r-status-cancelled::before {
+            background: #ef4444;
+        }
+
         /* Footer */
         .r-footer {
             text-align: center;

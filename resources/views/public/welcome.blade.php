@@ -378,7 +378,7 @@
                     </ul>
                     <div class="card-footer">
                         <div class="price">Rp 5.000<span>/jam</span></div>
-                        <button class="card-btn">→</button>
+                        <button class="card-btn" onclick="window.location.href='{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('billing')) : route('login') }}'">→</button>
                     </div>
                 </div>
 
@@ -396,7 +396,7 @@
                     </ul>
                     <div class="card-footer">
                         <div class="price">Rp 10.000<span>/jam</span></div>
-                        <button class="card-btn">→</button>
+                        <button class="card-btn" onclick="window.location.href='{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('billing')) : route('login') }}'">→</button>
                     </div>
                 </div>
 
@@ -414,7 +414,7 @@
                     </ul>
                     <div class="card-footer">
                         <div class="price price-vvip" style="color: #f59e0b;">Rp 25.000<span>/jam</span></div>
-                        <button class="card-btn">→</button>
+                        <button class="card-btn" onclick="window.location.href='{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('billing')) : route('login') }}'">→</button>
                     </div>
                 </div>
             </div>
